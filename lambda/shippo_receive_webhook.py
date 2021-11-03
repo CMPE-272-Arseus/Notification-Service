@@ -124,22 +124,22 @@ def sendOrderUpdateEmail(receipient, tracking_number, status, order_id):
     ses = boto3.client('ses')
     try:
         response = ses.send_email(Source=os.environ['SES_SENDER'],
-            destination={
+            Destination={
                 'ToAddresses': [
                     receipient,
                 ],
             },
-            message={
+            Message={
                 'Body': {
                     'Text': {
                         'Charset': 'UTF-8',
                         'Data': 'Your order {} has been updated! Your order status is now {}.\nTracking number: {}'.format(order_id, status['status'], tracking_number),
                     },
-                'Subject': {
+            },
+            'Subject': {
                     'Charset': 'UTF-8',
                     'Data': 'Your order status has been updated!',
                 },
-            },
             })
         logger.debug("[SEND_ORDER_UPDATE_EMAIL] response: {}".format(response))
     except Exception as e:
