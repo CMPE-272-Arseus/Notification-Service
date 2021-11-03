@@ -35,7 +35,9 @@ def lambda_handler(event, context):
     email = getEmail(order_data['user_id'])
     order_id = order_data['order_id']
     tracking_number = order_data['tracking_number']
-    
+
+    sendOrderUpdateEmail(email, tracking_number, eventBody['data']['tracking_status'], order_id)
+
     return {
         'statusCode': 200,
         'body': json.dumps('Sent notification email to {}'.format(email))
@@ -43,59 +45,103 @@ def lambda_handler(event, context):
 
 ### HELPER FUNCTIONS ###
 
+# Get the user data from DynamoDB using the user_id
 def getEmail(user_id):
-    # Get the user data from DynamoDB using the user_id
+    logger.debug("[GET_EMAIL]")
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(os.environ['USERS_TABLE'])
-    response = table.get_item(
-        Key={
-            'user_id': user_id
-        }
-    )
-    if "Item" not in response:
-        logger.error("[ERROR] User data not found")
-        raise Exception("User data not found")
-    user_data = response['Item']
-    logger.debug("[USER_DATA] user_data: {}".format(user_data))
-    print("[USER_DATA] user_data: {}".format(user_data))
-    return user_data['email']
+    try:
+        table = dynamodb.Table(os.environ['USERS_TABLE'])
+        response = table.get_item(
+            Key={
+                'user_id': user_id
+            }
+        )
+        if "Item" not in response:
+            logger.error("[ERROR] User data not found")
+            raise Exception("User data not found")
+        user_data = response['Item']
+        logger.debug("[GET_EMAIL] user_data: {}".format(user_data))
+        print("[GET_EMAIL] user_data: {}".format(user_data))
+        return user_data['email']
+    except Exception as e:
+        logger.error("[ERROR] Unable to get user data. Error: {}".format(e))
+        raise Exception("Unable to get user data")
 
+# Get the order data from DynamoDB using the order_id
 def getOrderResponse(order_id):
-    # Get the order data from DynamoDB using the order_id
+    logger.debug("[GET_ORDER_RESPONSE]")
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(os.environ['ORDERS_TABLE'])
-    response = table.get_item(
-        Key={
-            'order_id': order_id
-        }
-    )
-    if "Item" not in response:
-        logger.error("[ERROR] Order data not found")
-        raise Exception("Order data not found")
-    order_data = response['Item']
-    logger.debug("[ORDER_DATA] order_data: {}".format(order_data))
-    print("[ORDER_DATA] order_data: {}".format(order_data))
-    return order_data
+    try:
+        table = dynamodb.Table(os.environ['ORDERS_TABLE'])
+        response = table.get_item(
+            Key={
+                'order_id': order_id
+            }
+        )
+        if "Item" not in response:
+            logger.error("[ERROR] Order data not found")
+            raise Exception("Order data not found")
+        order_data = response['Item']
+        logger.debug("[GET_ORDER_RESPONSE] order_data: {}".format(order_data))
+        print("[GET_ORDER_RESPONSE] order_data: {}".format(order_data))
+        return order_data
+    except Exception as e:
+        logger.error("[ERROR] Unable to get order data. Error: {}".format(e))
+        raise Exception("Unable to get order data")
 
 def metaDataExists(metadata):
+    logger.debug("[META_DATA_EXISTS] metadata: {}".format(metadata))
     if 'order_id' in metadata:
         return True
     else:
         return False
 
+# Update the order status in DynamoDB
 def updateOrderStatus(order_id, status):
-    # Update the order status in DynamoDB
+    logger.debug("[UPDATE_ORDER_STATUS] order_id: {}".format(order_id))
     dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table(os.environ['ORDERS_TABLE'])
-    response = table.update_item(
-        Key={
-            'order_id': order_id
-        },
-        UpdateExpression="set order_status = :s",
-        ExpressionAttributeValues={
-            ':s': status
-        },
-        ReturnValues="UPDATED_NEW"
-    )
-    logger.debug("[UPDATE_ORDER_STATUS] response: {}".format(response))
-    print("[UPDATE_ORDER_STATUS] response: {}".format(response))
+    try:
+        table = dynamodb.Table(os.environ['ORDERS_TABLE'])
+        response = table.update_item(
+            Key={
+                'order_id': order_id
+            },
+            UpdateExpression="set order_status = :s",
+            ExpressionAttributeValues={
+                ':s': status
+            },
+            ReturnValues="UPDATED_NEW"
+        )
+        logger.debug("[UPDATE_ORDER_STATUS] response: {}".format(response))
+        print("[UPDATE_ORDER_STATUS] response: {}".format(response))
+    except Exception as e:
+        logger.error("[ERROR] Unable to update order status. Error: {}".format(e))
+        raise Exception("Unable to update order status")
+
+# Send an email to the user with the tracking status update for the order and tracking number
+def sendOrderUpdateEmail(receipient, tracking_number, status, order_id):
+    logger.debug("[SEND_ORDER_UPDATE_EMAIL] receipient: {} tracking_number: {}".format(receipient, tracking_number))
+    ses = boto3.client('ses')
+    try:
+        response = ses.send_email(Source=os.environ['SES_SENDER'],
+            destination={
+                'ToAddresses': [
+                    receipient,
+                ],
+            },
+            message={
+                'Body': {
+                    'Text': {
+                        'Charset': 'UTF-8',
+                        'Data': 'Your order {} has been updated! Your order status is now {}.\nTracking number: {}'.format(order_id, status['status'], tracking_number),
+                    },
+                'Subject': {
+                    'Charset': 'UTF-8',
+                    'Data': 'Your order status has been updated!',
+                },
+            },
+            })
+        logger.debug("[SEND_ORDER_UPDATE_EMAIL] response: {}".format(response))
+    except Exception as e:
+        logger.error("[ERROR] Unable to send email. Error: {}".format(e))
+        raise Exception("Unable to send email")
