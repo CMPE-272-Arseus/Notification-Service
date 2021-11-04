@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "aws-sdk": "^2.1020.0"
+    "aws-sdk": "^2.1020.0",
+    "shippo": "^1.6.0"
   }
 }
