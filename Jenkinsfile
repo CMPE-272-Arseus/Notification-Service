@@ -1,7 +1,14 @@
+@Library('github.com/releaseworks/jenkinslib') _
+
 pipeline {
 
     // Where to execute the pipeline script
     agent any
+
+    environment{
+        AWS_DEFAULT_REGION="us-west-2"
+        AWS_CREDENTIALS=credentials('AWS-admin')
+    }
 
     // Different pipeline stages
     stages {
@@ -9,36 +16,41 @@ pipeline {
             steps {
                 script {
                     echo "Initializing Pipeline"
+                     withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: "aws-admin",
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    ]]) {
+                        AWS("s3 ls")
+                    }
                 }
             }
         }
 
+        // Zips up the folders
         stage("build") {
-            // Script executes command on Jenkins agent
             steps {
                 script {
                     echo "Building ${BRANCH_NAME}"
+                    zip archive: true, dir: "lambda/CreateShippo", overwrite: true, zipFileName: "CreateShippo.zip"
                 }
             }
         }
 
-        stage("test frontend") {
+        // Uploads zipped folders to Lambda directly if under 10MB
+        stage("deploy") {
             steps {
                 script {
-                    echo "Testing ${BRANCH_NAME}"
-                }
-            }
-        }
-
-        stage("deploy frontend") {
-            when {
-                expression {
-                    (env.BRANCH_NAME == 'main')
-                }
-            }
-            steps {
-                script {
-                    echo "Deploying ${BRANCH_NAME}"
+                    echo "Deploying ${BRANCH_NAME} onto cmpe272-shippo-create"
+                    withCredentials([[
+                        $class: 'AmazonWebServicesCredentialsBinding',
+                        credentialsId: "aws-admin",
+                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                    ]]) {
+                        AWS("lambda update-function-code --function-name cmpe272-shippo-create --zip-file fileb://CreateShippo.zip")
+                    }
                 }
             }
         }
