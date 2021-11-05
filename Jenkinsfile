@@ -16,6 +16,13 @@ pipeline {
             steps {
                 script {
                     echo "Initializing Pipeline"
+                    echo "Installing Node Packages"
+                }
+                dir("lambda/CreateShippo") {
+                    nodejs("Node-16.13") {
+                        sh "npm install"
+                        echo "Packages Installed"
+                    }
                 }
             }
         }
@@ -25,7 +32,8 @@ pipeline {
             steps {
                 script {
                     echo "Building ${BRANCH_NAME}"
-                    zip archive: true, dir: "lambda/CreateShippo", overwrite: true, zipFileName: "CreateShippo.zip"
+
+                    zip archive: true, dir: "lambda/CreateShippo", overwrite: true, zipFile: "CreateShippo.zip"
                 }
             }
         }
@@ -37,11 +45,12 @@ pipeline {
                     echo "Deploying ${BRANCH_NAME} onto cmpe272-shippo-create"
                     withCredentials([[
                         $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: "aws-admin",
+                        credentialsId: "AWS-admin",
                         accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                     ]]) {
-                        AWS("lambda update-function-code --function-name cmpe272-shippo-create --zip-file fileb://CreateShippo.zip")
+                        AWS("s3 cp CreateShippo.zip s3://pbustos-cmpe281-assignment2")
+                        AWS("lambda update-function-code --function-name cmpe272-shippo-create --s3-bucket pbustos-cmpe281-assignment2 --s3-key CreateShippo.zip")
                     }
                 }
             }
