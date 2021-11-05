@@ -16,14 +16,6 @@ pipeline {
             steps {
                 script {
                     echo "Initializing Pipeline"
-                     withCredentials([[
-                        $class: 'AmazonWebServicesCredentialsBinding',
-                        credentialsId: "aws-admin",
-                        accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                        secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    ]]) {
-                        AWS("s3 ls")
-                    }
                 }
             }
         }
