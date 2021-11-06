@@ -42,15 +42,19 @@ pipeline {
         stage("deploy") {
             steps {
                 script {
-                    echo "Deploying ${BRANCH_NAME} onto cmpe272-shippo-create"
+                    
                     withCredentials([[
                         $class: 'AmazonWebServicesCredentialsBinding',
                         credentialsId: "AWS-admin",
                         accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                         secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                    ]]) {
+                    ],
+                    [string(credentialsId: 'cmpe272-dev-lambda', variable: 'LAMBDA')],
+                    [string(credentialsId: 'cmpe272-dev-bucket', variable: 'BUCKET')]
+                    ]) {
+                        echo "Deploying ${BRANCH_NAME} onto ${LAMBDA}"
                         AWS("s3 cp CreateShippo.zip s3://pbustos-cmpe281-assignment2")
-                        AWS("lambda update-function-code --function-name cmpe272-shippo-create --s3-bucket pbustos-cmpe281-assignment2 --s3-key CreateShippo.zip")
+                        AWS("lambda update-function-code --function-name ${LAMBDA} --s3-bucket ${BUCKET} --s3-key CreateShippo.zip")
                     }
                 }
             }
