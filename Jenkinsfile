@@ -55,7 +55,7 @@ pipeline {
                     ]
                     ) {
                         echo "Deploying ${BRANCH_NAME} onto $LAMBDA"
-                        AWS("s3 cp CreateShippo.zip s3://pbustos-cmpe281-assignment2")
+                        AWS("s3 cp CreateShippo.zip s3://$BUCKET")
                         AWS("lambda update-function-code --function-name $LAMBDA --s3-bucket $BUCKET --s3-key CreateShippo.zip")
                     }
                 }
