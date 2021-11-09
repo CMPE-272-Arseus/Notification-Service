@@ -28,22 +28,25 @@ exports.handler = async (event) => {
         }
     });
     console.log("[SHIPMENT] shipment: " + JSON.stringify(shipment));
+    console.log("[SHIPMENT] metadata: " + JSON.stringify(shipment.metadata));
     
     let rate = shipment.rates[0];
+    console.log("[RATES] type: " + typeof(shipment.rates));
     for (let i = 0; i < shipment.rates.length; i++) {
-        console.log("[SHIPMENT] shipment rates [" + i + "]: " + JSON.stringify(shipment.rates[i]));
-        console.log("[SHIPMENT] provider string: " + shipment.rates[i].provider);
-        console.log("[SHIPMENT] attributes: " + JSON.stringify(shipment.rates[i].attributes));
-        console.log("[SHIPMENT] provider bool: " + shipment.rates[i].provider.toUpperCase().trim() === "USPS");
-        console.log("[SHIPMENT] attributes bool: " + rate.attributes.includes("CHEAPEST",0));
+        console.log("[RATES] shipment rates [" + i + "]: " + JSON.stringify(shipment.rates[i]));
+        console.log("[RATES] type: " + typeof(shipment.rates[i]));
+        console.log("[RATES] provider string: " + shipment.rates[i].provider);
+        console.log("[RATES] attributes: " + JSON.stringify(shipment.rates[i].attributes));
+        console.log("[RATES] provider bool: " + shipment.rates[i].provider.toUpperCase().trim() === "USPS");
+        console.log("[RATES] attributes bool: " + rate.attributes.includes("CHEAPEST",0));
         if (rate.provider.toUpperCase().trim() === "USPS" && rate.attributes.includes("CHEAPEST",0)){
-            console.log("[SHIPMENT] cheapest found");
+            console.log("[RATES] cheapest found");
             rate = shipment.rates[i];
             break;
         }
     }
-    console.log("[SHIPMENT] shipment rates: " + JSON.stringify(shipment.rates));
-    console.log("[SHIPMENT RATE] rate: " + JSON.stringify(rate));
+    console.log("[RATES] shipment rates: " + JSON.stringify(shipment.rates));
+    console.log("[RATES] rate: " + JSON.stringify(rate));
     const transaction = await shippo.transaction.create({
         "rate": rate.object_id,
         "label_file_type": "PDF",
