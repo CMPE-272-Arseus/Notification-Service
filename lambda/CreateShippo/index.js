@@ -27,16 +27,18 @@ exports.handler = async (event) => {
             console.log("[SHIPPO] create success: " + shipment);
         }
     });
-    console.log("[SHIPMENT] shipment: " + shipment);
+    console.log("[SHIPMENT] shipment: " + JSON.stringify(shipment));
     
-    const rate = shipment.rates[0];
+    let rate = shipment.rates[0];
     for (let i = 0; i < shipment.rates.length; i++) {
+        console.log("[SHIPMENT] shipment rates [" + i + "]: " + shipment.rates[i]);
         if (rate.provider === "USPS" && rate.attributes.includes("CHEAPEST")){
+            console.log("[SHIPMENT] cheapest found");
             rate = shipment.rates[i];
             break;
         }
     }
-    console.log("[SHIPMENT] shipment rates: " + shipment.rates);
+    console.log("[SHIPMENT] shipment rates: " + JSON.stringify(shipment.rates));
     console.log("[SHIPMENT RATE] rate: " + JSON.stringify(rate));
     const transaction = shippo.transaction.create({
         "rate": rate.object_id,
