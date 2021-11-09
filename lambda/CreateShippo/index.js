@@ -7,6 +7,7 @@ exports.handler = async (event) => {
     const body = event.body;
     const customerAddr = setCustomerAddress(body.user);
     const parcel = body.parcel;
+    const order_id = uuid();
     console.log(customerAddr);
     
     const storeAddr = await getStoreAddress(body.store_id);
@@ -15,7 +16,10 @@ exports.handler = async (event) => {
         "address_from": storeAddr,
         "address_to": customerAddr,
         "parcels": [parcel],
-        "async":false
+        "async":false,
+        "metadata": {
+            "order_id": order_id
+        }
     }, function(err, shipment) {
         if (err) {
             console.log("[SHIPPO] create error: " + err);
@@ -24,24 +28,32 @@ exports.handler = async (event) => {
         }
     });
     console.log("[SHIPMENT] shipment: " + shipment);
-    const order_id = uuid();
+    
+    const rate = shipment.rates[0];
+    for (let i = 0; i < shipment.rates.length; i++) {
+        if (rate.provider === "USPS" && rate.attributes.includes("CHEAPEST")){
+            rate = shipment.rates[i];
+            break;
+        }
+    }
+    console.log("[SHIPMENT] shipment rates: " + shipment.rates);
+    console.log("[SHIPMENT RATE] rate: " + JSON.stringify(rate));
+    const transaction = shippo.transaction.create({
+        "rate": rate.object_id,
+        "label_file_type": "PDF",
+        "metadata": {
+            "order_id": order_id
+        },
+        "async": false
+    }, function(err, transaction) {
+        if (err) {
+            console.log("[SHIPPO] transaction error: " + err);
+        } else {
+            console.log("[SHIPPO] transaction success: " + transaction);
+        }
+    });
 
-    //const rate = shipment.rates[0];
-    console.log(shipment.rates);
-    // const transaction = shippo.transaction.create({
-    //     "rate": rate.object_id,
-    //     "label_file_type": "PDF",
-    //     "metadata": {
-    //         "order_id": order_id
-    //     },
-    //     "async": false
-    // }, function(err, transaction) {
-    //     if (err) {
-    //         console.log(err);
-    //     } else {
-    //         console.log(transaction);
-    //     }
-    // });
+    console.log("[TRANSACTION] transaction: " + JSON.stringify(transaction));
 
     // createCustomerOrder({
     //     "order_id": order_id,
