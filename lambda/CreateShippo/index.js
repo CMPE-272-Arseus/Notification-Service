@@ -22,16 +22,16 @@ exports.handler = async (event) => {
         }
     }, function(err, shipment) {
         if (err) {
-            console.log("[SHIPPO] create error: " + err);
+            console.log("[SHIPPO] create error: " + JSON.stringify(err));
         } else {
-            console.log("[SHIPPO] create success: " + shipment);
+            console.log("[SHIPPO] create success: " + JSON.stringify(shipment));
         }
     });
     console.log("[SHIPMENT] shipment: " + JSON.stringify(shipment));
     
     let rate = shipment.rates[0];
     for (let i = 0; i < shipment.rates.length; i++) {
-        console.log("[SHIPMENT] shipment rates [" + i + "]: " + shipment.rates[i]);
+        console.log("[SHIPMENT] shipment rates [" + i + "]: " + JSON.stringify(shipment.rates[i]));
         if (rate.provider === "USPS" && rate.attributes.includes("CHEAPEST")){
             console.log("[SHIPMENT] cheapest found");
             rate = shipment.rates[i];
@@ -40,7 +40,7 @@ exports.handler = async (event) => {
     }
     console.log("[SHIPMENT] shipment rates: " + JSON.stringify(shipment.rates));
     console.log("[SHIPMENT RATE] rate: " + JSON.stringify(rate));
-    const transaction = shippo.transaction.create({
+    const transaction = await shippo.transaction.create({
         "rate": rate.object_id,
         "label_file_type": "PDF",
         "metadata": {
@@ -49,9 +49,9 @@ exports.handler = async (event) => {
         "async": false
     }, function(err, transaction) {
         if (err) {
-            console.log("[SHIPPO] transaction error: " + err);
+            console.log("[SHIPPO] transaction error: " + JSON.stringify(err));
         } else {
-            console.log("[SHIPPO] transaction success: " + transaction);
+            console.log("[SHIPPO] transaction success: " + JSON.stringify(transaction));
         }
     });
 
