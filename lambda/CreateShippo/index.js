@@ -32,6 +32,8 @@ exports.handler = async (event) => {
     let rate = shipment.rates[0];
     for (let i = 0; i < shipment.rates.length; i++) {
         console.log("[SHIPMENT] shipment rates [" + i + "]: " + JSON.stringify(shipment.rates[i]));
+        console.log("[SHIPMENT] provider string: " + shipment.rates[i].provider);
+        console.log("[SHIPMENT] attributes: " + JSON.stringify(shipment.rates[i].attributes));
         console.log("[SHIPMENT] provider bool: " + shipment.rates[i].provider.toUpperCase() === "USPS");
         console.log("[SHIPMENT] attributes bool: " + rate.attributes.includes("CHEAPEST",0));
         if (rate.provider.toUpperCase() === "USPS" && rate.attributes.includes("CHEAPEST",0)){
