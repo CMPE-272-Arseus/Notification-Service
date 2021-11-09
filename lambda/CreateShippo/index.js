@@ -28,7 +28,7 @@ exports.handler = async (event) => {
         }
     });
     console.log("[SHIPMENT] shipment: " + JSON.stringify(shipment));
-    console.log("[SHIPMENT] metadata: " + JSON.stringify(shipment.metadata));
+    console.log("[SHIPMENT] metadata type: " + typeof(shipment.metadata));
     
     let rate = shipment.rates[0];
     console.log("[RATES] type: " + typeof(shipment.rates));
