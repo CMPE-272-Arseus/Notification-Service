@@ -59,16 +59,16 @@ exports.handler = async (event) => {
 
     console.log("[TRANSACTION] transaction: " + JSON.stringify(transaction));
 
-    // createCustomerOrder({
-    //     "order_id": order_id,
-    //     "user_id": body.user.user_id,
-    //     "status": "created",
-    //     "tracking_number": transaction.tracking_number,
-    //     "tracking_url": transaction.tracking_url,
-    //     "shippo_id": transaction.object_id,
-    //     "created_at": new Date().toISOString(),
-    //     "updated_at": new Date().toISOString()
-    // });
+    createCustomerOrder({
+        "order_id": order_id,
+        "user_id": body.user.user_id,
+        "status": "created",
+        "tracking_number": transaction.tracking_number,
+        "tracking_url": transaction.tracking_url,
+        "shippo_id": transaction.object_id,
+        "created_at": new Date().toISOString(),
+        "updated_at": new Date().toISOString()
+    });
     
     const response = {
         statusCode: 200,
