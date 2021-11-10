@@ -8,11 +8,12 @@ logger.setLevel(logging.DEBUG)
 
 ### Simple Lambda webhook response. Typically returns 200 unless something in the backend is wrong like a missing order_id or user_id.
 def lambda_handler(event, context):
-    eventBody = event['body']
+    eventBody = event
+    if 'body' in event.keys():
+        eventBody = event['body']
     if eventBody == str:
         eventBody = json.loads(eventBody)
     logger.debug("[EVENT] event: {}".format(eventBody))
-    logger.debug("[TRACKER] event metadata: {}".format(eventBody['metadata']))
     logger.debug("[TRACKER] event: {}".format(eventBody['event']))
     logger.debug("[TRACKER_DATA] data: {}".format(eventBody['data']))
 
@@ -22,9 +23,9 @@ def lambda_handler(event, context):
 
     order_id = None
     if metaDataExists(eventBody['data']['metadata']):
-        metadata = eventBody['data']['metadata']
-        metadata = metadata.split(' ')
-        order_id = metadata[1]
+        logger.debug("[META_DATA] metadata: {}".format(eventBody['data']['metadata']))
+        metadata = json.loads(eventBody['data']['metadata'])
+        order_id = metadata['order_id']
     else:
         logger.error("[ERROR] metadata does not exist in request")
         raise Exception("metadata does not exist in request")
@@ -37,8 +38,12 @@ def lambda_handler(event, context):
     email = getEmail(order_data['user_id'])
     order_id = order_data['order_id']
     tracking_number = order_data['tracking_number']
+    tracking_url = order_data['tracking_url']
 
-    sendOrderUpdateEmail(email, tracking_number, eventBody['data']['tracking_status'], order_id)
+    logger.debug("[TRACKING_STATUS] data type: {}".format(type(eventBody['data'])))
+    logger.debug("[TRACKING_STATUS] data value: {}".format(eventBody['data']))
+
+    sendOrderUpdateEmail(email, tracking_number, eventBody['data']['tracking_status'], order_id, tracking_url)
 
     return {
         'statusCode': 200,
@@ -121,8 +126,9 @@ def updateOrderStatus(order_id, status):
         raise Exception("Unable to update order status")
 
 # Send an email to the user with the tracking status update for the order and tracking number
-def sendOrderUpdateEmail(receipient, tracking_number, status, order_id):
+def sendOrderUpdateEmail(receipient, tracking_number, status, order_id, url):
     logger.debug("[SEND_ORDER_UPDATE_EMAIL] receipient: {} tracking_number: {}".format(receipient, tracking_number))
+    logger.debug("[SEND_ORDER_UPDATE_EMAIL] status: {} order_id: {}".format(status, order_id))
     ses = boto3.client('ses')
     try:
         response = ses.send_email(Source=os.environ['SES_SENDER'],
@@ -135,7 +141,7 @@ def sendOrderUpdateEmail(receipient, tracking_number, status, order_id):
                 'Body': {
                     'Text': {
                         'Charset': 'UTF-8',
-                        'Data': 'Your order {} has been updated! Your order status is now {}.\nTracking number: {}'.format(order_id, status['status'], tracking_number),
+                        'Data': 'Your order {} has been updated! Your order status is now {}.\nTracking number: {}\nTracking URL: {}'.format(order_id, status, tracking_number, url),
                     },
             },
             'Subject': {
