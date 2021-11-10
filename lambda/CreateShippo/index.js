@@ -52,18 +52,18 @@ exports.handler = async (event) => {
 
     console.log("[RATES] shipment rates: " + JSON.stringify(shipment.rates));
     console.log("[RATES] rate: " + JSON.stringify(rate));
-    // const transaction = await shippo.transaction.create({
-    //     "rate": rate.object_id,
-    //     "label_file_type": "PDF",
-    //     "metadata": metadata,
-    //     "async": false
-    // }, function(err, transaction) {
-    //     if (err) {
-    //         console.log("[SHIPPO] transaction error: " + JSON.stringify(err));
-    //     } else {
-    //         console.log("[SHIPPO] transaction success: " + JSON.stringify(transaction));
-    //     }
-    // });
+    const transaction = await shippo.transaction.create({
+        "rate": rate.object_id,
+        "label_file_type": "PDF",
+        "metadata": metadata,
+        "async": false
+    }, function(err, transaction) {
+        if (err) {
+            console.log("[SHIPPO] transaction error: " + JSON.stringify(err));
+        } else {
+            console.log("[SHIPPO] transaction success: " + JSON.stringify(transaction));
+        }
+    });
 
     console.log("[TRANSACTION] transaction: " + JSON.stringify(transaction));
 
