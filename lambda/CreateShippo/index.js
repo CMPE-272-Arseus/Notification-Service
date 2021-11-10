@@ -62,9 +62,9 @@ exports.handler = async (event) => {
     createCustomerOrder({
         "order_id": order_id,
         "user_id": body.user.user_id,
-        "status": "created",
+        "status": transaction.tracking_status,
         "tracking_number": transaction.tracking_number,
-        "tracking_url": transaction.tracking_url,
+        "tracking_url": transaction.tracking_url_provider,
         "shippo_id": transaction.object_id,
         "created_at": new Date().toISOString(),
         "updated_at": new Date().toISOString()
@@ -73,10 +73,12 @@ exports.handler = async (event) => {
     const response = {
         statusCode: 200,
         body: {
-            tracking_number: "string",
-            tracking_url: "url",
-            shippo_id: "asdf",
-            order_status: "PRE-TRANSIT"
+            tracking_number: transaction.tracking_number,
+            tracking_url: transaction.tracking_url_provider,
+            label_url: transaction.label_url,
+            order_status: transaction.tracking_status,
+            parcel_id: transaction.parcel,
+            rate_id: transaction.rate,
         },
         headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
