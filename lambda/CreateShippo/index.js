@@ -40,9 +40,10 @@ exports.handler = async (event) => {
         console.log("[RATES] provider string: " + shipment.rates[i].provider);
         console.log("[RATES] provider string type: " + typeof(shipment.rates[i].provider));
         console.log("[RATES] attributes: " + JSON.stringify(shipment.rates[i].attributes));
+        console.log("[RATES] attributes type: " + typeof(shipment.rates[i].attributes));
         console.log("[RATES] provider bool: " + (shipment.rates[i].provider.toUpperCase().trim() === "USPS"));
-        console.log("[RATES] attributes bool: " + rate.attributes.includes("CHEAPEST",0));
-        if (rate.provider.toUpperCase().trim() === "USPS" && rate.attributes.includes("CHEAPEST",0)){
+        console.log("[RATES] attributes bool: " + Aray.from(rate.attributes).includes("CHEAPEST"));
+        if (rate.provider.toUpperCase().trim() === "USPS" && Array.from(rate.attributes).includes("CHEAPEST")){
             console.log("[RATES] cheapest found");
             rate = shipment.rates[i];
             break;
