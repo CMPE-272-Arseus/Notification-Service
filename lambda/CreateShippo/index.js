@@ -59,7 +59,7 @@ exports.handler = async (event) => {
 
     console.log("[TRANSACTION] transaction: " + JSON.stringify(transaction));
 
-    createCustomerOrder({
+    await createCustomerOrder({
         "order_id": order_id,
         "user_id": body.user.user_id,
         "status": transaction.tracking_status,
@@ -132,9 +132,9 @@ const setCustomerAddress = (data) => {
     };
 }
 
-const createCustomerOrder = (data) => {
+const createCustomerOrder = async (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
-    const res = dynamo.putItem({
+    const res = await dynamo.putItem({
         TableName: process.env.ORDER_TABLE,
         Item: {
             "order_id": {
@@ -169,6 +169,6 @@ const createCustomerOrder = (data) => {
             console.log("[CREATE_CUSTOMER_ORDER] success: " + data);
         }
     }
-    );
+    ).promise();
     console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + JSON.stringify(res));
 };
