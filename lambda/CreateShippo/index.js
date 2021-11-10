@@ -30,28 +30,20 @@ exports.handler = async (event) => {
     });
     console.log("[SHIPMENT] shipment: " + JSON.stringify(shipment));
     console.log("[SHIPMENT] metadata: " + JSON.stringify(shipment.metadata));
-    console.log("[SHIPMENT] metadata type: " + typeof(shipment.metadata));
     
     let rate = shipment.rates[0];
-    console.log("[RATES] type: " + typeof(shipment.rates));
+    console.log("[RATES] shipment rates: " + JSON.stringify(shipment.rates));
+    console.log("[RATES] shipment type: " + typeof(shipment.rates));
     for (let i = 0; i < shipment.rates.length; i++) {
         console.log("[RATES] shipment rates [" + i + "]: " + JSON.stringify(shipment.rates[i]));
-        console.log("[RATES] type: " + typeof(shipment.rates[i]));
-        console.log("[RATES] provider string: " + shipment.rates[i].provider);
-        console.log("[RATES] provider string type: " + typeof(shipment.rates[i].provider));
-        console.log("[RATES] attributes: " + JSON.stringify(shipment.rates[i].attributes));
-        console.log("[RATES] attributes type: " + typeof(shipment.rates[i].attributes));
-        console.log("[RATES] provider bool: " + (shipment.rates[i].provider.toUpperCase().trim() === "USPS"));
-        console.log("[RATES] attributes bool: " + Array.from(shipment.rates[i].attributes).includes("CHEAPEST"));
         if ((shipment.rates[i].provider.toUpperCase().trim() === "USPS") && Array.from(shipment.rates[i].attributes).includes("CHEAPEST")){
             console.log("[RATES] cheapest found");
             rate = shipment.rates[i];
             break;
         }
     }
-
-    console.log("[RATES] shipment rates: " + JSON.stringify(shipment.rates));
-    console.log("[RATES] rate: " + JSON.stringify(rate));
+    console.log("[RATES] selected rate: " + JSON.stringify(rate));
+    
     const transaction = await shippo.transaction.create({
         "rate": rate.object_id,
         "label_file_type": "PDF",
