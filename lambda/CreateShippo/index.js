@@ -132,7 +132,7 @@ const setCustomerAddress = (data) => {
     };
 }
 
-const createCustomerOrder = async (data) => {
+const createCustomerOrder = (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
     dynamo.putItem({
         TableName: process.env.ORDER_TABLE,
