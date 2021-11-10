@@ -8,6 +8,9 @@ exports.handler = async (event) => {
     const customerAddr = setCustomerAddress(body.user);
     const parcel = body.parcel;
     const order_id = uuid();
+    let metadata = JSON.stringify({
+        "order_id": order_id,
+    });
     console.log(customerAddr);
     
     const storeAddr = await getStoreAddress(body.store_id);
@@ -17,9 +20,7 @@ exports.handler = async (event) => {
         "address_to": customerAddr,
         "parcels": [parcel],
         "async":false,
-        "metadata": {
-            "order_id": order_id
-        }
+        "metadata": metadata
     }, function(err, shipment) {
         if (err) {
             console.log("[SHIPPO] create error: " + JSON.stringify(err));
@@ -28,6 +29,7 @@ exports.handler = async (event) => {
         }
     });
     console.log("[SHIPMENT] shipment: " + JSON.stringify(shipment));
+    console.log("[SHIPMENT] metadata: " + JSON.stringify(shipment.metadata));
     console.log("[SHIPMENT] metadata type: " + typeof(shipment.metadata));
     
     let rate = shipment.rates[0];
@@ -36,6 +38,7 @@ exports.handler = async (event) => {
         console.log("[RATES] shipment rates [" + i + "]: " + JSON.stringify(shipment.rates[i]));
         console.log("[RATES] type: " + typeof(shipment.rates[i]));
         console.log("[RATES] provider string: " + shipment.rates[i].provider);
+        console.log("[RATES] provider string type: " + typeof(shipment.rates[i].provider));
         console.log("[RATES] attributes: " + JSON.stringify(shipment.rates[i].attributes));
         console.log("[RATES] provider bool: " + shipment.rates[i].provider.toUpperCase().trim() === "USPS");
         console.log("[RATES] attributes bool: " + rate.attributes.includes("CHEAPEST",0));
@@ -45,22 +48,21 @@ exports.handler = async (event) => {
             break;
         }
     }
+
     console.log("[RATES] shipment rates: " + JSON.stringify(shipment.rates));
     console.log("[RATES] rate: " + JSON.stringify(rate));
-    const transaction = await shippo.transaction.create({
-        "rate": rate.object_id,
-        "label_file_type": "PDF",
-        "metadata": {
-            "order_id": order_id
-        },
-        "async": false
-    }, function(err, transaction) {
-        if (err) {
-            console.log("[SHIPPO] transaction error: " + JSON.stringify(err));
-        } else {
-            console.log("[SHIPPO] transaction success: " + JSON.stringify(transaction));
-        }
-    });
+    // const transaction = await shippo.transaction.create({
+    //     "rate": rate.object_id,
+    //     "label_file_type": "PDF",
+    //     "metadata": metadata,
+    //     "async": false
+    // }, function(err, transaction) {
+    //     if (err) {
+    //         console.log("[SHIPPO] transaction error: " + JSON.stringify(err));
+    //     } else {
+    //         console.log("[SHIPPO] transaction success: " + JSON.stringify(transaction));
+    //     }
+    // });
 
     console.log("[TRANSACTION] transaction: " + JSON.stringify(transaction));
 
@@ -114,7 +116,9 @@ const getStoreAddress = async (storeId) => {
         "store_name": data.Item.store_name.S,
         "phone": data.Item.phone.S,
         "email": data.Item.email.S,
-        "store_id": data.Item.store_id.S
+        "store_id": data.Item.store_id.S,
+        "name": data.Item.name.S,
+        "company": data.Item.company.S
     };
 };
 
