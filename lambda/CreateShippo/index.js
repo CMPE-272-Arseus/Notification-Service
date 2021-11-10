@@ -134,7 +134,7 @@ const setCustomerAddress = (data) => {
 
 const createCustomerOrder = (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
-    const data = dynamo.putItem({
+    const res = dynamo.putItem({
         TableName: process.env.ORDER_TABLE,
         Item: {
             "order_id": {
@@ -170,5 +170,5 @@ const createCustomerOrder = (data) => {
         }
     }
     );
-    console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
+    console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + JSON.stringify(res));
 };
