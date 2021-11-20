@@ -34,6 +34,7 @@ pipeline {
                     echo "Building ${BRANCH_NAME}"
 
                     zip archive: true, dir: "lambda/CreateShippo", overwrite: true, zipFile: "CreateShippo.zip"
+                    zip archive: true, dir: "lambda/Webhook", overwrite: true, zipFile "ShippoWebhook.zip"
                 }
             }
         }
@@ -57,6 +58,7 @@ pipeline {
                         echo "Deploying ${BRANCH_NAME} onto $LAMBDA"
                         AWS("s3 cp CreateShippo.zip s3://$BUCKET")
                         AWS("lambda update-function-code --function-name $LAMBDA --s3-bucket $BUCKET --s3-key CreateShippo.zip")
+                        AWS("lambda update-function-code --function-name $LAMBDA2 --s3-bucket $BUCKET --s3-key ShippoWebhook.zip")
                     }
                 }
             }
