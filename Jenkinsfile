@@ -34,7 +34,7 @@ pipeline {
                     echo "Building ${BRANCH_NAME}"
 
                     zip archive: true, dir: "lambda/CreateShippo", overwrite: true, zipFile: "CreateShippo.zip"
-                    zip archive: true, dir: "lambda/Webhook", overwrite: true, zipFile "ShippoWebhook.zip"
+                    zip archive: true, dir: "lambda/Webhook", overwrite: true, zipFile: "ShippoWebhook.zip"
                 }
             }
         }
