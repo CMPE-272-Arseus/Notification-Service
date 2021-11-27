@@ -6,9 +6,11 @@ const { v4: uuid } = require('uuid');
 exports.handler = async (event) => {
     console.log("[EVENT] event: " + JSON.stringify(event));
     let body = "";
-    if ('body' in event) {
+    if (event.body !== null) {
+        console.log("[EVENT] event.body: " + event.body);
         const body = JSON.parse(event.body);
     } else {
+        console.log("[EVENT] event.body is null");
         body = JSON.parse(event);
     }
     const customerAddr = setCustomerAddress(body.user);
