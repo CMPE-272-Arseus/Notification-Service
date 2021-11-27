@@ -74,6 +74,7 @@ exports.handler = async (event) => {
         "status": transaction.tracking_status,
         "tracking_number": transaction.tracking_number,
         "tracking_url": transaction.tracking_url_provider,
+        "label_url": transaction.label_url,
         "shippo_id": transaction.object_id,
         "created_at": new Date().toISOString(),
         "updated_at": new Date().toISOString()
