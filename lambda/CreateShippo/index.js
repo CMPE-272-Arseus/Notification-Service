@@ -7,7 +7,7 @@ exports.handler = async (event) => {
     const body = event.body;
     const customerAddr = setCustomerAddress(body.user);
     const parcel = body.parcel;
-    const order_id = uuid();
+    const order_id = body.order_id;
     let metadata = JSON.stringify({
         "order_id": order_id,
     });
@@ -59,7 +59,7 @@ exports.handler = async (event) => {
 
     console.log("[TRANSACTION] transaction: " + JSON.stringify(transaction));
 
-    await createCustomerOrder({
+    await updateCustomerOrder({
         "order_id": order_id,
         "user_id": body.user.user_id,
         "status": transaction.tracking_status,
@@ -132,7 +132,7 @@ const setCustomerAddress = (data) => {
     };
 }
 
-const createCustomerOrder = async (data) => {
+const updateCustomerOrder = async (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
     const res = await dynamo.putItem({
         TableName: process.env.ORDER_TABLE,
