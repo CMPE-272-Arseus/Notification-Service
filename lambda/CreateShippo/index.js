@@ -189,6 +189,7 @@ const updateCustomerOrder = async (data) => {
             console.log("[CREATE_CUSTOMER_ORDER] error: " + err);
         } else {
             console.log("[CREATE_CUSTOMER_ORDER] success: " + data);
+            return data;
         }
     }
     ).promise();
