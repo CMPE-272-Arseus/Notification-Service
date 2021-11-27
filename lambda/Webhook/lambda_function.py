@@ -9,11 +9,15 @@ logger.setLevel(logging.DEBUG)
 ### Simple Lambda webhook response. Typically returns 200 unless something in the backend is wrong like a missing order_id or user_id.
 def lambda_handler(event, context):
     eventBody = event
+    if type(eventBody) == str:
+        eventBody = json.loads(eventBody)
     if 'body' in event.keys():
         eventBody = event['body']
-    if eventBody == str:
+    logger.debug("[EVENT] event type: {}".format(type(eventBody)))
+    if type(eventBody) == str:
         eventBody = json.loads(eventBody)
     logger.debug("[EVENT] event: {}".format(eventBody))
+    logger.debug("[EVENT] event type: {}".format(type(eventBody)))
     logger.debug("[TRACKER] event: {}".format(eventBody['event']))
     logger.debug("[TRACKER_DATA] data: {}".format(eventBody['data']))
 

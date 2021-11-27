@@ -6,7 +6,7 @@ const { v4: uuid } = require('uuid');
 exports.handler = async (event) => {
     const body = event.body;
     const customerAddr = setCustomerAddress(body.user);
-    const shippoParcel = shippo.parcel.create({
+    const shippoParcel = await shippo.parcel.create({
         length: 20,
         width: 20,
         height: 2,
