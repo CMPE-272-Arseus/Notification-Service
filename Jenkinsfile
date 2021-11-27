@@ -24,6 +24,12 @@ pipeline {
                         echo "Packages Installed"
                     }
                 }
+                dir("lambda/GetOrderStatus") {
+                    nodejs("Node-16.13") {
+                        sh "npm install"
+                        echo "Packages Installed"
+                    }
+                }
             }
         }
 
@@ -35,6 +41,7 @@ pipeline {
 
                     zip archive: true, dir: "lambda/CreateShippo", overwrite: true, zipFile: "CreateShippo.zip"
                     zip archive: true, dir: "lambda/Webhook", overwrite: true, zipFile: "ShippoWebhook.zip"
+                    zip archive: true, dir: "lambda/GetOrderStatus", overwrite: true, zipFile: "GetOrderStatus.zip"
                 }
             }
         }
@@ -61,6 +68,7 @@ pipeline {
                         AWS("s3 cp ShippoWebhook.zip s3://$BUCKET")
                         AWS("lambda update-function-code --function-name $LAMBDA --s3-bucket $BUCKET --s3-key CreateShippo.zip")
                         AWS("lambda update-function-code --function-name $LAMBDA2 --s3-bucket $BUCKET --s3-key ShippoWebhook.zip")
+                        AWS("lambda update-function-code --function-name $LAMBDA3 --s3-bucket $BUCKET --s3-key GetOrderStatus.zip")
                     }
                 }
             }

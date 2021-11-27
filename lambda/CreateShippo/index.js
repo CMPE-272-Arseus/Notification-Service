@@ -80,6 +80,7 @@ exports.handler = async (event) => {
         "order_id": order_id,
         "user_id": body.user.user_id,
         "status": transaction.tracking_status,
+        "carrier": rate.provider,
         "tracking_number": transaction.tracking_number,
         "tracking_url": transaction.tracking_url_provider,
         "label_url": transaction.label_url,
