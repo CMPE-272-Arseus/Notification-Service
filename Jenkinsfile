@@ -67,6 +67,7 @@ pipeline {
                         echo "Deploying ${BRANCH_NAME} onto $LAMBDA"
                         AWS("s3 cp CreateShippo.zip s3://$BUCKET")
                         AWS("s3 cp ShippoWebhook.zip s3://$BUCKET")
+                        AWS("s3 cp GetOrderStatus.zip s3://$BUCKET")
                         AWS("lambda update-function-code --function-name $LAMBDA --s3-bucket $BUCKET --s3-key CreateShippo.zip")
                         AWS("lambda update-function-code --function-name $LAMBDA2 --s3-bucket $BUCKET --s3-key ShippoWebhook.zip")
                         AWS("lambda update-function-code --function-name $LAMBDA3 --s3-bucket $BUCKET --s3-key GetOrderStatus.zip")
