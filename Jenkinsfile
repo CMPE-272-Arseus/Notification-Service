@@ -55,6 +55,7 @@ pipeline {
                         string(credentialsId: 'cmpe272-dev-bucket', variable: 'BUCKET'), 
                         string(credentialsId: 'cmpe272-dev-lambda', variable: 'LAMBDA'),
                         string(credentialsId: 'cmpe272-dev-lambda-webhook', variable: 'LAMBDA2'),
+                        string(credentialsId: 'cmpe272-dev-lambda-get-order-update', variable: 'LAMBDA3'),
                         [
                             $class: 'AmazonWebServicesCredentialsBinding',
                             credentialsId: "AWS-admin",
