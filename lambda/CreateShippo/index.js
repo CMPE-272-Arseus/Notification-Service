@@ -4,7 +4,13 @@ const shippo = require("shippo")(process.env.SHIPPO_APIKEY);
 const { v4: uuid } = require('uuid');
 
 exports.handler = async (event) => {
-    const body = event.body;
+    console.log("[EVENT] event: " + JSON.stringify(event));
+    let body = "";
+    if ('body' in event) {
+        const body = event.body;
+    } else {
+        body = event;
+    }
     const customerAddr = setCustomerAddress(body.user);
     const shippoParcel = await shippo.parcel.create({
         length: 20,
