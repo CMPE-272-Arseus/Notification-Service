@@ -7,9 +7,9 @@ exports.handler = async (event) => {
     console.log("[EVENT] event: " + JSON.stringify(event));
     let body = "";
     if ('body' in event) {
-        const body = event.body;
+        const body = JSON.parse(event.body);
     } else {
-        body = event;
+        body = JSON.parse(event);
     }
     const customerAddr = setCustomerAddress(body.user);
     const shippoParcel = await shippo.parcel.create({
