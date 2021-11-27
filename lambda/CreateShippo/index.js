@@ -8,7 +8,7 @@ exports.handler = async (event) => {
     let body = "";
     if (event.body !== null) {
         console.log("[EVENT] event.body: " + event.body);
-        const body = JSON.parse(event.body);
+        body = JSON.parse(event.body);
     } else {
         console.log("[EVENT] event.body is null");
         body = JSON.parse(event);
