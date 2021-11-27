@@ -6,7 +6,16 @@ const { v4: uuid } = require('uuid');
 exports.handler = async (event) => {
     const body = event.body;
     const customerAddr = setCustomerAddress(body.user);
-    const parcel = body.parcel;
+    const shippoParcel = shippo.parcel.create({
+        length: 20,
+        width: 20,
+        height: 2,
+        distance_unit: "in",
+        weight: 2,
+        mass_unit: "lb"
+    });
+    const parcel = shippoParcel;
+    //const parcel = body.parcel;
     const order_id = body.order_id;
     let metadata = JSON.stringify({
         "order_id": order_id,
