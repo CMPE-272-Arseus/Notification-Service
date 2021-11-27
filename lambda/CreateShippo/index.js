@@ -165,6 +165,9 @@ const updateCustomerOrder = async (data) => {
             "order_status": {
                 S: data.status
             },
+            "carrier": {
+                S: data.carrier
+            },
             "tracking_number": {
                 S: data.tracking_number
             },
