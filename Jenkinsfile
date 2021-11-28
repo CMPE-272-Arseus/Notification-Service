@@ -47,7 +47,7 @@ pipeline {
         }
 
         // Uploads zipped folders to Lambda directly if under 10MB
-        stage("deploy") {
+        stage("dev-deploy") {
             steps {
                 script {
                     
@@ -59,6 +59,34 @@ pipeline {
                         [
                             $class: 'AmazonWebServicesCredentialsBinding',
                             credentialsId: "AWS-admin",
+                            accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                            secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                        ]
+                    ]
+                    ) {
+                        echo "Deploying ${BRANCH_NAME} onto $LAMBDA"
+                        AWS("s3 cp CreateShippo.zip s3://$BUCKET")
+                        AWS("s3 cp ShippoWebhook.zip s3://$BUCKET")
+                        AWS("s3 cp GetOrderStatus.zip s3://$BUCKET")
+                        AWS("lambda update-function-code --function-name $LAMBDA --s3-bucket $BUCKET --s3-key CreateShippo.zip")
+                        AWS("lambda update-function-code --function-name $LAMBDA2 --s3-bucket $BUCKET --s3-key ShippoWebhook.zip")
+                        AWS("lambda update-function-code --function-name $LAMBDA3 --s3-bucket $BUCKET --s3-key GetOrderStatus.zip")
+                    }
+                }
+            }
+        }
+        stage("prod-deploy") {
+            steps {
+                script {
+                    
+                    withCredentials([
+                        string(credentialsId: 'cmpe272-prod-bucket', variable: 'BUCKET'), 
+                        string(credentialsId: 'cmpe272-prod-lambda-create', variable: 'LAMBDA'),
+                        string(credentialsId: 'cmpe272-prod-lambda-webhook', variable: 'LAMBDA2'),
+                        string(credentialsId: 'cmpe272-prod-lambda-get-order-update', variable: 'LAMBDA3'),
+                        [
+                            $class: 'AmazonWebServicesCredentialsBinding',
+                            credentialsId: "AWS-CMPE272",
                             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
                             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
                         ]
