@@ -165,7 +165,7 @@ const updateCustomerOrder = async (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
     let bStatus = false;
     const res = await dynamo.putItem({
-        ReturnConsumedCapacity: 'TOTAL',
+        ReturnValues: "ALL_NEW",
         TableName: process.env.ORDER_TABLE,
         Item: {
             "order_id": {
