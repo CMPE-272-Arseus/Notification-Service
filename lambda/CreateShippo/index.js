@@ -210,11 +210,11 @@ const updateCustomerOrder = async (data) => {
             console.log("[CREATE_CUSTOMER_ORDER] error: " + err);
             bStatus = false;
         } else {
-            console.log("[CREATE_CUSTOMER_ORDER] success: " + JSON.stringify(data));
+            console.log("[CREATE_CUSTOMER_ORDER] success: " + data);
             bStatus = true;
         }
     }
     );
-    console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + JSON.stringify(res));
+    console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + res);
     return bStatus;
 };
