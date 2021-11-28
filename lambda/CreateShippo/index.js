@@ -76,7 +76,7 @@ exports.handler = async (event) => {
 
     console.log("[TRANSACTION] transaction: " + JSON.stringify(transaction));
 
-    await updateCustomerOrder({
+    const bUpdate = await updateCustomerOrder({
         "order_id": order_id,
         "user_id": body.user.user_id,
         "status": transaction.tracking_status,
@@ -88,6 +88,16 @@ exports.handler = async (event) => {
         "created_at": new Date().toISOString(),
         "updated_at": new Date().toISOString()
     });
+    
+    if (!bUpdate) {
+        console.log("[UPDATE_ORDER] update failed");
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                message: "dynamo update failed"
+            })
+        };
+    }
     
     const response = {
         statusCode: 200,
@@ -187,11 +197,13 @@ const updateCustomerOrder = async (data) => {
     }, (err, data) => {
         if (err) {
             console.log("[CREATE_CUSTOMER_ORDER] error: " + err);
+            return false;
         } else {
-            console.log("[CREATE_CUSTOMER_ORDER] success: " + data);
-            console.log("[CREATE_CUSTOMER_ORDER] success string: " + JSON.stringify(data));
+            console.log("[CREATE_CUSTOMER_ORDER] success: " + JSON.stringify(data));
+            return true;
         }
     }
     ).promise();
     console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + JSON.stringify(res));
+    return res;
 };
