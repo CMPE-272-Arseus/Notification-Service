@@ -173,7 +173,7 @@ const setCustomerAddress = (data) => {
 const updateCustomerOrder = async (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
     let bStatus = false;
-    const res = await dynamo.putItem({
+    dynamo.putItem({
         ReturnConsumedCapacity: 'TOTAL',
         TableName: process.env.ORDER_TABLE,
         Item: {
@@ -214,9 +214,7 @@ const updateCustomerOrder = async (data) => {
             bStatus = true;
         }
     }
-    ).then(() => {
-        return bStatus;
-    });
-    console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + res);
+    );
+    //console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + res);
     return bStatus;
 };
