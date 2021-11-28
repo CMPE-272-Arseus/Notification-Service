@@ -111,8 +111,8 @@ exports.handler = async (event) => {
     }
     
     return {
-        statusCode: 200,
-        body: {
+        "statusCode": 200,
+        "body": {
             tracking_number: transaction.tracking_number,
             tracking_url: transaction.tracking_url_provider,
             label_url: transaction.label_url,
@@ -120,7 +120,7 @@ exports.handler = async (event) => {
             parcel_id: transaction.parcel,
             rate_id: transaction.rate,
         },
-        headers: {
+        "headers": {
             "Access-Control-Allow-Headers" : "Content-Type",
             "Access-Control-Allow-Origin": "*",
             "Access-Control-Allow-Methods": "*",
