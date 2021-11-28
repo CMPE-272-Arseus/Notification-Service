@@ -214,7 +214,9 @@ const updateCustomerOrder = async (data) => {
             bStatus = true;
         }
     }
-    ).promise();
+    ).then(() => {
+        return bStatus;
+    });
     console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + res);
     return bStatus;
 };
