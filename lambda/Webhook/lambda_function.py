@@ -47,7 +47,14 @@ def lambda_handler(event, context):
     logger.debug("[TRACKING_STATUS] data type: {}".format(type(eventBody['data'])))
     logger.debug("[TRACKING_STATUS] data value: {}".format(eventBody['data']))
 
-    sendOrderUpdateEmail(email, tracking_number, eventBody['data']['tracking_status'], order_id, tracking_url)
+    logger.debug("[TRACKING_STATUS] tracking_status type: {}".format(type(eventBody['data']['tracking_status'])))
+    logger.debug("[TRACKING_STATUS] tracking_status value: {}".format(eventBody['data']['tracking_status']))
+    tracking_status = eventBody['data']['tracking_status']
+    if (type(eventBody['data']['tracking_status']) == dict):
+        tracking_status = eventBody['data']['tracking_status']['status']
+    logger.debug("[TRACKING_STATUS] tracking_status value: {}".format(tracking_status))
+    sendOrderUpdateEmail(email, tracking_number, tracking_status, order_id, tracking_url)
+    updateOrderStatus(order_id, tracking_status)
 
     return {
         'statusCode': 200,
