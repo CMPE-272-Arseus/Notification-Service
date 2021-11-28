@@ -203,7 +203,7 @@ const updateCustomerOrder = async (data) => {
             return true;
         }
     }
-    );
+    ).promise();
     console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + JSON.stringify(res));
     return res;
 };
