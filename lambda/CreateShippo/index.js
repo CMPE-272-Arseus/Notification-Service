@@ -1,7 +1,6 @@
 const AWS = require("aws-sdk");
 const dynamo = new AWS.DynamoDB;
 const shippo = require("shippo")(process.env.SHIPPO_APIKEY);
-const { v4: uuid } = require('uuid');
 
 exports.handler = async (event) => {
     console.log("[EVENT] event: " + JSON.stringify(event));

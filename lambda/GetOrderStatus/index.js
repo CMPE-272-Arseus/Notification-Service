@@ -1,7 +1,7 @@
 const AWS = require("aws-sdk");
 const dynamo = new AWS.DynamoDB;
 const shippo = require("shippo")(process.env.SHIPPO_APIKEY);
-const { v4: uuid } = require('uuid');
+const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
     console.log("[EVENT] event: " + JSON.stringify(event));
@@ -15,9 +15,7 @@ exports.handler = async (event) => {
 
     const response = {
         statusCode: 200,
-        body: {
-            data: shippoData,
-        },
+        body: JSON.stringify({data: shippoData}),
         headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
             "Access-Control-Allow-Origin": "*",
