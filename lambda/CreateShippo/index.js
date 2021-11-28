@@ -8,6 +8,7 @@ exports.handler = async (event) => {
     let body = "";
     if (event.body !== null) {
         console.log("[EVENT] event.body: " + event.body);
+        console.log("[EVENT] event.body.type: " + typeof(event.body));
         body = event.body;
     } else {
         console.log("[EVENT] event.body is null");
