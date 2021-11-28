@@ -9,10 +9,18 @@ exports.handler = async (event) => {
     if (event.body !== null) {
         console.log("[EVENT] event.body: " + event.body);
         console.log("[EVENT] event.body.type: " + typeof(event.body));
-        body = event.body;
+        if (typeof(event.body) === "string") {
+            body = JSON.parse(event.body);
+        } else {
+            body = event.body;
+        }
     } else {
         console.log("[EVENT] event.body is null");
-        body = JSON.parse(event);
+        if (typeof(event) === "string") {
+            body = JSON.parse(event);
+        } else {
+            body = event;
+        }
     }
     const customerAddr = setCustomerAddress(body.user);
     const shippoParcel = await shippo.parcel.create({
