@@ -108,7 +108,7 @@ exports.handler = async (event) => {
         };
     }
     
-    const response = {
+    return {
         statusCode: 200,
         body: {
             tracking_number: transaction.tracking_number,
@@ -125,7 +125,6 @@ exports.handler = async (event) => {
             'Access-Control-Allow-Credentials': true
         }
     };
-    return response;
 };
 
 const getStoreAddress = async (storeId) => {
