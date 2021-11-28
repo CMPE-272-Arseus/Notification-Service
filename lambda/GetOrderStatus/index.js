@@ -39,5 +39,7 @@ const getOrderData = async (orderID) => {
     const data =  await dynamo.getItem(params).promise();
     console.log("[GET_ORDER_DATA] dynamo response: " + JSON.stringify(data));
     return {
+        "carrier": data.Item.carrier.S,
+        "tracking_number": data.Item.tracking_number.S,
     };
 };
