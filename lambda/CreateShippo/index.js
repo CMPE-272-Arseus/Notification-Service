@@ -106,6 +106,8 @@ exports.handler = async (event) => {
                 message: "dynamo update failed"
             })
         };
+    } else {
+        console.log("[UPDATE_ORDER] update success");
     }
     
     return {
