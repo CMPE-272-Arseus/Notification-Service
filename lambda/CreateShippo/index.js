@@ -233,7 +233,7 @@ const updateCustomerOrder = async (data) => {
         UpdateExpression: "set statues = :status, carrier = :carrier, trackingNumber = :tracking_number, url = :tracking_url, labelUrl = :label_url, shippo_id = :shippo_id, updated_at = :updated_at",
         ExpressionAttributeValues: {
             ":status": {
-                S: data.status
+                N: data.status
             },
             ":carrier": {
                 S: data.carrier
