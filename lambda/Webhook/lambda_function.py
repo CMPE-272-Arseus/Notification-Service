@@ -54,6 +54,11 @@ def lambda_handler(event, context):
         tracking_status = eventBody['data']['tracking_status']['status']
     logger.debug("[TRACKING_STATUS] tracking_status value: {}".format(tracking_status))
     sendOrderUpdateEmail(email, tracking_number, tracking_status, order_id, tracking_url)
+    tracking_status = convertStatus(tracking_status)
+    if (tracking_status == -1) {
+        logger.error("[ERROR] Unable to convert status")
+        raise Exception("Unable to convert status")
+    }
     updateOrderStatus(order_id, tracking_status)
 
     return {
@@ -71,7 +76,7 @@ def getEmail(user_id):
         table = dynamodb.Table(os.environ['USERS_TABLE'])
         response = table.get_item(
             Key={
-                'user_id': user_id
+                'UserId': user_id
             }
         )
         if "Item" not in response:
@@ -93,7 +98,7 @@ def getOrderResponse(order_id):
         table = dynamodb.Table(os.environ['ORDERS_TABLE'])
         response = table.get_item(
             Key={
-                'order_id': order_id
+                'orderId': order_id
             }
         )
         if "Item" not in response:
@@ -122,11 +127,11 @@ def updateOrderStatus(order_id, status):
         table = dynamodb.Table(os.environ['ORDERS_TABLE'])
         response = table.update_item(
             Key={
-                'order_id': order_id
+                'orderId': order_id
             },
-            UpdateExpression="set order_status = :s",
+            UpdateExpression="set shipping = :n",
             ExpressionAttributeValues={
-                ':s': status
+                ':n': status
             },
             ReturnValues="UPDATED_NEW"
         )
@@ -164,3 +169,19 @@ def sendOrderUpdateEmail(receipient, tracking_number, status, order_id, url):
     except Exception as e:
         logger.error("[ERROR] Unable to send email. Error: {}".format(e))
         raise Exception("Unable to send email")
+
+def convertStatus(status):
+    logger.debug("[CONVERT_STATUS] status: {}".format(status))
+    if status == 'UNKOWN':
+        return 0
+    elif status == 'PRE_TRANSIT':
+        return 1
+    elif status == 'TRANSIT':
+        return 2
+    elif status == 'DELIVERED':
+        return 3
+    elif status == 'RETURNED':
+        return 4
+    elif status == 'FAILURE':
+        return 5
+    return -1

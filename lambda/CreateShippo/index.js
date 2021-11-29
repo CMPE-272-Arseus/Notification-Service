@@ -32,7 +32,7 @@ exports.handler = async (event) => {
     });
     const parcel = shippoParcel;
     //const parcel = body.parcel;
-    const order_id = body.order_id;
+    const order_id = body.orderId;
     let metadata = JSON.stringify({
         "order_id": order_id,
     });
@@ -84,16 +84,25 @@ exports.handler = async (event) => {
 
     console.log("[TRANSACTION] transaction: " + JSON.stringify(transaction));
 
+    const tracking_status = convertStatus(transaction.tracking_status);
+
+    if (tracking_status === -1) {
+        console.log("[TRANSACTION] tracking_status error: " + tracking_status);
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                "error": "Shippo tracking_status error"
+            })
+        };
+    } 
     const bUpdate = await updateCustomerOrder({
         "order_id": order_id,
-        "user_id": body.user.user_id,
-        "status": transaction.tracking_status,
+        "status": tracking_status,
         "carrier": rate.provider,
         "tracking_number": transaction.tracking_number,
         "tracking_url": transaction.tracking_url_provider,
         "label_url": transaction.label_url,
         "shippo_id": transaction.object_id,
-        "created_at": new Date().toISOString(),
         "updated_at": new Date().toISOString()
     });
     
@@ -133,7 +142,7 @@ const getStoreAddress = async (storeId) => {
     console.log("[GET_STORE_ADDRESS] storeId: " + storeId);
     const params = {
       Key: {
-       "store_id": {
+       "storeId": {
          S: storeId
         }, 
       }, 
@@ -148,7 +157,7 @@ const getStoreAddress = async (storeId) => {
         "country": data.Item.country.S,
         "street1": data.Item.street1.S,
         "store_name": data.Item.store_name.S,
-        "phone": data.Item.phone.S,
+        "phone": data.Item.phone.N,
         "email": data.Item.email.S,
         "store_id": data.Item.store_id.S,
         "name": data.Item.name.S,
@@ -174,38 +183,38 @@ const setCustomerAddress = (data) => {
 const updateCustomerOrder = async (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
     let bStatus = true;
-    dynamo.putItem({
+    dynamo.updateItem({
         ReturnConsumedCapacity: 'TOTAL',
         TableName: process.env.ORDER_TABLE,
-        Item: {
-            "order_id": {
+        Key: {
+            "orderId": {
                 S: data.order_id
-            },
-            "user_id": {
-                S: data.user_id
-            },
-            "order_status": {
+            }
+        },
+        UpdateExpression: "set statues = :status, carrier = :carrier, trackingNumber = :tracking_number, url = :tracking_url, labelUrl = :label_url, shippo_id = :shippo_id, updated_at = :updated_at",
+        ExpressionAttributeValues: {
+            ":status": {
                 S: data.status
             },
-            "carrier": {
+            ":carrier": {
                 S: data.carrier
             },
-            "tracking_number": {
+            ":tracking_number": {
                 S: data.tracking_number
             },
-            "tracking_url": {
+            ":tracking_url": {
                 S: data.tracking_url
             },
-            "shippo_id": {
+            ":shippo_id": {
                 S: data.shippo_id
             },
-            "created_at": {
-                S: data.created_at
-            },
-            "updated_at": {
+            ":updated_at": {
                 S: data.updated_at
+            },
+            ":label_url": {
+                S: data.label_url
             }
-        }
+        },
     }, (err, data) => {
         if (err) {
             console.log("[CREATE_CUSTOMER_ORDER] error: " + err);
@@ -217,4 +226,21 @@ const updateCustomerOrder = async (data) => {
     );
     //console.log("[CREATE_CUSTOMER_ORDER] dynamo response: " + res);
     return bStatus;
+};
+
+const convertStatus = (status) => {
+    if (status === "UNKNOWN") {
+        return 0;
+    } else if (status === "PRE_TRANSIT") {
+        return 1;
+    } else if (status === "TRANSIT") {
+        return 2;
+    } else if (status === "DELIVERED") {
+        return 3;
+    } else if (status === "RETURNED") {
+        return 4;
+    } else if (status === "FAILURE") {
+        return 5;
+    }
+    return -1;
 };

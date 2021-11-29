@@ -30,7 +30,7 @@ const getOrderData = async (orderID) => {
     console.log("[GET_ORDER_DATA] orderID: " + orderID);
     const params = {
       Key: {
-       "order_id": {
+       "orderId": {
          S: orderID
         }, 
       }, 
@@ -40,6 +40,6 @@ const getOrderData = async (orderID) => {
     console.log("[GET_ORDER_DATA] dynamo response: " + JSON.stringify(data));
     return {
         "carrier": data.Item.carrier.S,
-        "tracking_number": data.Item.tracking_number.S,
+        "trackingNumber": data.Item.tracking_number.S,
     };
 };
