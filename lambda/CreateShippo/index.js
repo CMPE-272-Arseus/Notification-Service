@@ -1,6 +1,7 @@
 const AWS = require("aws-sdk");
 const dynamo = new AWS.DynamoDB;
 const shippo = require("shippo")(process.env.SHIPPO_APIKEY);
+const util = require("util");
 
 exports.handler = async (event) => {
     console.log("[EVENT] event: " + JSON.stringify(event));
@@ -188,7 +189,7 @@ const getStoreAddress = async (storeId) => {
     catch (err) {
         console.log("[GET_STORE_ADDRESS] exception: " + err);
     }
-    console.log("[GET_STORE_ADDRESS] data: " + data);
+    console.log("[GET_STORE_ADDRESS] data: " + util.inspect(data));
     return data;
 };
 
