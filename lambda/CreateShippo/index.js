@@ -207,7 +207,7 @@ const getStoreAddress = async (storeId) => {
 const setCustomerAddress = (data) => {
     console.log("[SET_CUSTOMER_ADDRESS] data: " + data);
     return {
-        'name': date.name,
+        'name': data.name,
         'street1': data.street1,
         'city': data.city,
         'state': data.state,
