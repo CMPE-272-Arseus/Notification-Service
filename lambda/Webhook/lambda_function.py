@@ -73,13 +73,15 @@ def getEmail(user_id):
     dynamodb = boto3.resource('dynamodb')
     try:
         table = dynamodb.Table(os.environ['USERS_TABLE'])
-        response = table.get_item(
-            Key={
-                'UserID': {
-                    'S': user_id
-                }
+        response = table.query(
+            IndexName='UserIDIndex',
+            Select='ALL_ATTRIBUTES',
+            KeyConditionExpression="userId = :user_id)",
+            ExpressionAttributeValues={
+                ':user_id': user_id
             }
         )
+        logger.debug("[GET_EMAIL] response: {}".format(response))
         if "Item" not in response:
             logger.error("[ERROR] User data not found")
             raise Exception("User data not found")
