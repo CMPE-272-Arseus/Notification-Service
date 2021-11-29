@@ -163,7 +163,7 @@ const getStoreAddress = async (storeId) => {
       }, 
       TableName: process.env.STORE_TABLE
      };
-    const data =  dynamo.getItem(params, function(err, data) {
+    const data =  await dynamo.getItem(params, function(err, data) {
         if (err) {
             console.log("[GET_STORE_ADDRESS] error: " + JSON.stringify(err));
             return null;
@@ -211,7 +211,7 @@ const setCustomerAddress = (data) => {
 const updateCustomerOrder = async (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
     let bStatus = true;
-    dynamo.updateItem({
+    await dynamo.updateItem({
         ReturnConsumedCapacity: 'TOTAL',
         TableName: process.env.ORDER_TABLE,
         Key: {
