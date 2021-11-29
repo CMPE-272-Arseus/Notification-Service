@@ -23,14 +23,14 @@ exports.handler = async (event) => {
         }
     }
     const customerAddr = setCustomerAddress(body.user);
-    const shippoParcel = shippo.parcel.create({
+    const shippoParcel = await shippo.parcel.create({
         length: 20,
         width: 20,
         height: 2,
         distance_unit: "in",
         weight: 2,
         mass_unit: "lb"
-    });
+    }).promise();
     const parcel = shippoParcel;
     //const parcel = body.parcel;
     const order_id = body.orderId;
@@ -53,9 +53,9 @@ exports.handler = async (event) => {
             }
         };
     }
+    console.log("[CREATE_SHIPPO] storeAddr: " + util.inspect(storeAddr));
 
-
-    const shipment = shippo.shipment.create({
+    const shipment = await shippo.shipment.create({
         "address_from": storeAddr,
         "address_to": customerAddr,
         "parcels": [parcel],
@@ -67,7 +67,7 @@ exports.handler = async (event) => {
         } else {
             console.log("[SHIPPO] create success: " + JSON.stringify(shipment));
         }
-    });
+    }).promise();
     console.log("[SHIPMENT] shipment: " + JSON.stringify(shipment));
     console.log("[SHIPMENT] metadata: " + JSON.stringify(shipment.metadata));
     
