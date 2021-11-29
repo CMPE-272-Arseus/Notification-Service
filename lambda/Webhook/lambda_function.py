@@ -84,7 +84,7 @@ def getEmail(user_id):
         user_data = response['Items']
         logger.debug("[GET_EMAIL] user_data: {}".format(user_data))
         logger.debug("[GET_EMAIL] user_data[0]: {}".format(user_data[0]))
-        return user_data[0]['email']
+        return user_data[0]['Email']
     except Exception as e:
         logger.error("[ERROR] Unable to get user data. Error: {}".format(e))
         raise Exception("Unable to get user data")
