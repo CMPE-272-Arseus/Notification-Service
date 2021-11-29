@@ -30,7 +30,7 @@ exports.handler = async (event) => {
         distance_unit: "in",
         weight: 2,
         mass_unit: "lb"
-    }).promise();
+    });
     const parcel = shippoParcel;
     //const parcel = body.parcel;
     const order_id = body.orderId;
@@ -67,7 +67,7 @@ exports.handler = async (event) => {
         } else {
             console.log("[SHIPPO] create success: " + JSON.stringify(shipment));
         }
-    }).promise();
+    });
     console.log("[SHIPMENT] shipment: " + JSON.stringify(shipment));
     console.log("[SHIPMENT] metadata: " + JSON.stringify(shipment.metadata));
     
