@@ -172,13 +172,13 @@ const getStoreAddress = async (storeId) => {
             return {
                 "city": data.Item.city.S,
                 "zip": data.Item.zip.S,
-                "state": data.Item.state.S,
+                "state": data.Item.province.S,
                 "country": data.Item.country.S,
                 "street1": data.Item.street1.S,
                 "phone": data.Item.phone.N,
                 "email": data.Item.email.S,
                 "store_id": data.Item.storeId.S,
-                "name": data.Item.name.S,
+                "name": data.Item.storeName.S,
                 "company": data.Item.company.S
             };
         }
@@ -193,22 +193,21 @@ const getStoreAddress = async (storeId) => {
     return {
         "city": data.Item.city.S,
         "zip": data.Item.zip.S,
-        "state": data.Item.state.S,
+        "state": data.Item.province.S,
         "country": data.Item.country.S,
         "street1": data.Item.street1.S,
         "phone": data.Item.phone.N,
         "email": data.Item.email.S,
         "store_id": data.Item.storeId.S,
-        "name": data.Item.name.S,
+        "name": data.Item.storeName.S,
         "company": data.Item.company.S
     };
 };
 
 const setCustomerAddress = (data) => {
     console.log("[SET_CUSTOMER_ADDRESS] data: " + data);
-    const name = data.first_name + " " + data.last_name;
     return {
-        'name': name,
+        'name': date.name,
         'street1': data.street1,
         'city': data.city,
         'state': data.state,
@@ -230,7 +229,7 @@ const updateCustomerOrder = async (data) => {
                 S: data.order_id
             }
         },
-        UpdateExpression: "set statues = :status, carrier = :carrier, trackingNumber = :tracking_number, url = :tracking_url, labelUrl = :label_url, shippo_id = :shippo_id, updated_at = :updated_at",
+        UpdateExpression: "set statues = :status, carrier = :carrier, trackingNumber = :tracking_number, tracking_url = :tracking_url, labelUrl = :label_url, shippo_id = :shippo_id, updated_at = :updated_at",
         ExpressionAttributeValues: {
             ":status": {
                 N: data.status.toString()
