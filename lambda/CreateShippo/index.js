@@ -84,7 +84,7 @@ exports.handler = async (event) => {
     }
     console.log("[RATES] selected rate: " + JSON.stringify(rate));
     
-    const transaction = shippo.transaction.create({
+    const transaction = await shippo.transaction.create({
         "rate": rate.object_id,
         "label_file_type": "PDF",
         "metadata": metadata,
