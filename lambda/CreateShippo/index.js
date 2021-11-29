@@ -156,10 +156,9 @@ const getStoreAddress = async (storeId) => {
         "state": data.Item.state.S,
         "country": data.Item.country.S,
         "street1": data.Item.street1.S,
-        "store_name": data.Item.store_name.S,
         "phone": data.Item.phone.N,
         "email": data.Item.email.S,
-        "store_id": data.Item.store_id.S,
+        "store_id": data.Item.storeId.S,
         "name": data.Item.name.S,
         "company": data.Item.company.S
     };
