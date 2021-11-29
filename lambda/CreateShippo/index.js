@@ -190,7 +190,18 @@ const getStoreAddress = async (storeId) => {
         console.log("[GET_STORE_ADDRESS] exception: " + err);
     }
     console.log("[GET_STORE_ADDRESS] data: " + util.inspect(data));
-    return data;
+    return {
+        "city": data.Item.city.S,
+        "zip": data.Item.zip.S,
+        "state": data.Item.state.S,
+        "country": data.Item.country.S,
+        "street1": data.Item.street1.S,
+        "phone": data.Item.phone.N,
+        "email": data.Item.email.S,
+        "store_id": data.Item.storeId.S,
+        "name": data.Item.name.S,
+        "company": data.Item.company.S
+    };
 };
 
 const setCustomerAddress = (data) => {
