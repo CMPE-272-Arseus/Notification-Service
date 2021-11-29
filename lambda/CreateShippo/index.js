@@ -136,12 +136,12 @@ exports.handler = async (event) => {
     return {
         statusCode: 200,
         body: JSON.stringify({
-            tracking_number: transaction.tracking_number,
-            tracking_url: transaction.tracking_url_provider,
-            label_url: transaction.label_url,
-            order_status: transaction.tracking_status,
-            parcel_id: transaction.parcel,
-            rate_id: transaction.rate,
+            trackingNumber: transaction.tracking_number,
+            trackingUrl: transaction.tracking_url_provider,
+            labelUrl: transaction.label_url,
+            orderStatus: transaction.tracking_status,
+            parcelId: transaction.parcel,
+            rateId: transaction.rate,
         }),
         headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
@@ -153,6 +153,9 @@ exports.handler = async (event) => {
     };
 };
 
+// HELPER FUNCTIONS //
+
+// Returns the store data from DynamoDB
 const getStoreAddress = async (storeId) => {
     console.log("[GET_STORE_ADDRESS] storeId: " + storeId);
     const params = {
@@ -204,6 +207,7 @@ const getStoreAddress = async (storeId) => {
     };
 };
 
+// Sets the customer data to a format that Shippo can use
 const setCustomerAddress = (data) => {
     console.log("[SET_CUSTOMER_ADDRESS] data: " + data);
     return {
@@ -218,6 +222,7 @@ const setCustomerAddress = (data) => {
     };
 }
 
+// Updates the customer order in DynamoDB
 const updateCustomerOrder = async (data) => {
     console.log("[CREATE_CUSTOMER_ORDER] data: " + JSON.stringify(data));
     let bStatus = true;
@@ -229,7 +234,7 @@ const updateCustomerOrder = async (data) => {
                 S: data.order_id
             }
         },
-        UpdateExpression: "set statues = :status, carrier = :carrier, trackingNumber = :tracking_number, tracking_url = :tracking_url, labelUrl = :label_url, shippo_id = :shippo_id, updated_at = :updated_at",
+        UpdateExpression: "set statues = :status, carrier = :carrier, trackingNumber = :tracking_number, trackingUrl = :tracking_url, labelUrl = :label_url, shippoId = :shippo_id, updatedAt = :updated_at",
         ExpressionAttributeValues: {
             ":status": {
                 N: data.status.toString()
@@ -266,6 +271,7 @@ const updateCustomerOrder = async (data) => {
     return bStatus;
 };
 
+// Converts a shippo tracking status to an integer
 const convertStatus = (status) => {
     if (status === "UNKNOWN") {
         return 0;
