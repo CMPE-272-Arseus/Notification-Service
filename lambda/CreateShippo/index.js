@@ -149,7 +149,7 @@ const getStoreAddress = async (storeId) => {
       TableName: process.env.STORE_TABLE
      };
     const data =  await dynamo.getItem(params);
-    console.log("[GET_STORE_ADDRESS] dynamo response: " + JSON.stringify(data));
+    console.log("[GET_STORE_ADDRESS] dynamo response: " + data);
     return {
         "city": data.Item.city.S,
         "zip": data.Item.zip.S,
