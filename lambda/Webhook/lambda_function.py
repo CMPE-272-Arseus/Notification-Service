@@ -55,10 +55,9 @@ def lambda_handler(event, context):
     logger.debug("[TRACKING_STATUS] tracking_status value: {}".format(tracking_status))
     sendOrderUpdateEmail(email, tracking_number, tracking_status, order_id, tracking_url)
     tracking_status = convertStatus(tracking_status)
-    if (tracking_status == -1) {
+    if (tracking_status == -1):
         logger.error("[ERROR] Unable to convert status")
         raise Exception("Unable to convert status")
-    }
     updateOrderStatus(order_id, tracking_status)
 
     return {
