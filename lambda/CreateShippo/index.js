@@ -182,6 +182,13 @@ const getStoreAddress = async (storeId) => {
             };
         }
     });
+    try {
+        console.log("[GET_STORE_ADDRESS] data stringify: " + JSON.stringify(data));
+    }
+    catch (err) {
+        console.log("[GET_STORE_ADDRESS] exception: " + err);
+    }
+    console.log("[GET_STORE_ADDRESS] data: " + data);
     return data;
 };
 
