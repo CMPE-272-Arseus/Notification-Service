@@ -39,6 +39,20 @@ exports.handler = async (event) => {
     console.log(customerAddr);
     
     const storeAddr = await getStoreAddress(body.store_id);
+    if (storeAddr === null) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({
+                "message": "Store address not found or error"
+            }),
+            headers: {
+                "Access-Control-Allow-Headers" : "Content-Type",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
+            }
+        };
+    }
+
 
     const shipment = await shippo.shipment.create({
         "address_from": storeAddr,
@@ -148,7 +162,26 @@ const getStoreAddress = async (storeId) => {
       }, 
       TableName: process.env.STORE_TABLE
      };
-    const data =  dynamo.getItem(params);
+    const data =  dynamo.getItem(params, function(err, data) {
+        if (err) {
+            console.log("[GET_STORE_ADDRESS] error: " + JSON.stringify(err));
+            return null;
+        } else {
+            console.log("[GET_STORE_ADDRESS] success: " + JSON.stringify(data));
+            return {
+                "city": data.Item.city.S,
+                "zip": data.Item.zip.S,
+                "state": data.Item.state.S,
+                "country": data.Item.country.S,
+                "street1": data.Item.street1.S,
+                "phone": data.Item.phone.N,
+                "email": data.Item.email.S,
+                "store_id": data.Item.storeId.S,
+                "name": data.Item.name.S,
+                "company": data.Item.company.S
+            };
+        }
+    });
     console.log("[GET_STORE_ADDRESS] dynamo response: " + data);
     return {
         "city": data.Item.city.S,
