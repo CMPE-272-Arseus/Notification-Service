@@ -75,7 +75,7 @@ def getEmail(user_id):
         table = dynamodb.Table(os.environ['USERS_TABLE'])
         response = table.get_item(
             Key={
-                'UserId': {
+                'UserID': {
                     'S': user_id
                 }
             }
