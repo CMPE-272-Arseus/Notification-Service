@@ -74,20 +74,16 @@ def getEmail(user_id):
     try:
         table = dynamodb.Table(os.environ['USERS_TABLE'])
         response = table.query(
-            IndexName='UserIDIndex',
             Select='ALL_ATTRIBUTES',
             KeyConditionExpression=boto3.dynamodb.conditions.Key('UserID').eq(user_id),
-            ExpressionAttributeValues={
-                ':user_id': user_id
-            }
         )
         logger.debug("[GET_EMAIL] response: {}".format(response))
-        if "Item" not in response:
+        if "Items" not in response:
             logger.error("[ERROR] User data not found")
             raise Exception("User data not found")
-        user_data = response['Item']
+        user_data = response['Items']
         logger.debug("[GET_EMAIL] user_data: {}".format(user_data))
-        print("[GET_EMAIL] user_data: {}".format(user_data))
+        logger.debug("[GET_EMAIL] user_data[0]: {}".format(user_data[0]))
         return user_data['email']
     except Exception as e:
         logger.error("[ERROR] Unable to get user data. Error: {}".format(e))
@@ -103,13 +99,13 @@ def getOrderResponse(order_id):
             Select='ALL_ATTRIBUTES',
             KeyConditionExpression=boto3.dynamodb.conditions.Key('orderId').eq(order_id)
         )
-        if "Item" not in response:
+        if "Items" not in response:
             logger.error("[ERROR] Order data not found")
             raise Exception("Order data not found")
-        order_data = response['Item']
+        order_data = response['Items']
         logger.debug("[GET_ORDER_RESPONSE] order_data: {}".format(order_data))
-        print("[GET_ORDER_RESPONSE] order_data: {}".format(order_data))
-        return order_data
+        logger.debug("[GET_ORDER_RESPONSE] order_data[0]: {}".format(order_data[0]))
+        return order_data[0]
     except Exception as e:
         logger.error("[ERROR] Unable to get order data. Error: {}".format(e))
         raise Exception("Unable to get order data")
