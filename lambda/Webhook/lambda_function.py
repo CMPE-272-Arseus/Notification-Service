@@ -75,7 +75,9 @@ def getEmail(user_id):
         table = dynamodb.Table(os.environ['USERS_TABLE'])
         response = table.get_item(
             Key={
-                'UserId': user_id
+                'UserId': {
+                    'S': user_id
+                }
             }
         )
         if "Item" not in response:
@@ -97,7 +99,9 @@ def getOrderResponse(order_id):
         table = dynamodb.Table(os.environ['ORDERS_TABLE'])
         response = table.get_item(
             Key={
-                'orderId': order_id
+                'orderId': {
+                    'S': order_id
+                }
             }
         )
         if "Item" not in response:
@@ -126,7 +130,9 @@ def updateOrderStatus(order_id, status):
         table = dynamodb.Table(os.environ['ORDERS_TABLE'])
         response = table.update_item(
             Key={
-                'orderId': order_id
+                'orderId': {
+                    'S': order_id
+                }
             },
             UpdateExpression="set shipping = :n",
             ExpressionAttributeValues={
