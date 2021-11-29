@@ -76,7 +76,7 @@ def getEmail(user_id):
         response = table.query(
             IndexName='UserIDIndex',
             Select='ALL_ATTRIBUTES',
-            KeyConditionExpression=dynamodb.Key('UserID').eq(user_id),
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('UserID').eq(user_id),
             ExpressionAttributeValues={
                 ':user_id': user_id
             }
