@@ -40,9 +40,9 @@ def lambda_handler(event, context):
     print("[ORDER_DATA] order_data: {}".format(order_data))
 
     email = getEmail(order_data['userId'])
-    order_id = order_data['order_id']
-    tracking_number = order_data['tracking_number']
-    tracking_url = order_data['tracking_url']
+    order_id = order_data['orderId']
+    tracking_number = order_data['trackingNumber']
+    tracking_url = order_data['trackingurl']
 
     logger.debug("[TRACKING_STATUS] data type: {}".format(type(eventBody['data'])))
     logger.debug("[TRACKING_STATUS] data value: {}".format(eventBody['data']))
