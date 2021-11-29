@@ -182,7 +182,7 @@ const getStoreAddress = async (storeId) => {
                 "company": data.Item.company.S
             };
         }
-    });
+    }).promise();
     try {
         console.log("[GET_STORE_ADDRESS] data stringify: " + JSON.stringify(data));
     }
