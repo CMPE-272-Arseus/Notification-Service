@@ -22,7 +22,7 @@ exports.handler = async (event) => {
         }
     }
     const customerAddr = setCustomerAddress(body.user);
-    const shippoParcel = await shippo.parcel.create({
+    const shippoParcel = shippo.parcel.create({
         length: 20,
         width: 20,
         height: 2,
@@ -54,7 +54,7 @@ exports.handler = async (event) => {
     }
 
 
-    const shipment = await shippo.shipment.create({
+    const shipment = shippo.shipment.create({
         "address_from": storeAddr,
         "address_to": customerAddr,
         "parcels": [parcel],
@@ -83,7 +83,7 @@ exports.handler = async (event) => {
     }
     console.log("[RATES] selected rate: " + JSON.stringify(rate));
     
-    const transaction = await shippo.transaction.create({
+    const transaction = shippo.transaction.create({
         "rate": rate.object_id,
         "label_file_type": "PDF",
         "metadata": metadata,
