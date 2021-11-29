@@ -99,9 +99,12 @@ def getOrderResponse(order_id):
     dynamodb = boto3.resource('dynamodb')
     try:
         table = dynamodb.Table(os.environ['ORDERS_TABLE'])
-        response = table.get_item(
-            Key={
-                'orderId': order_id
+        response = table.query(
+            IndexName='userId-index',
+            Select='ALL_ATTRIBUTES',
+            KeyConditionExpression=boto3.dynamodb.conditions.Key('orderId').eq(order_id),
+            ExpressionAttributeValues={
+                ':order_id': order_id
             }
         )
         if "Item" not in response:
