@@ -142,6 +142,8 @@ exports.handler = async (event) => {
             orderStatus: transaction.tracking_status,
             parcelId: transaction.parcel,
             rateId: transaction.rate,
+            rateAmount: rate.amount,
+            rateCurrency: rate.currency,
         }),
         headers: {
             "Access-Control-Allow-Headers" : "Content-Type",
