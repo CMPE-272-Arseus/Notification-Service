@@ -1,11 +1,11 @@
 # Notification-Service
 
 ## Repository Single Region Architecture
-![Notification Architecture](https://i.imgur.com/fp5ZkPr.jpg)
+![Notification Architecture](https://i.imgur.com/np4LLD6.png)
 
 ## Repository Requirements
   - AWS Account
-  - Shippo Account
+  - Shippo Account with test API key
   - Email to send Order Status Updates from
   - Node.JS
   - Python 3

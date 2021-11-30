@@ -5,11 +5,11 @@ const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
     console.log("[EVENT] event: " + JSON.stringify(event));
-    const order_id = event.queryStringParameters.order_id;
+    const order_id = event.queryStringParameters.orderId;
     
     const orderData = await getOrderData(order_id);
     const carrier = orderData.carrier;
-    const tracking_number = orderData.tracking_number;
+    const tracking_number = orderData.trackingNumber;
 
     const shippoData = await fetch(`https://api.shippo.com/tracks/${carrier}/${tracking_number}/`);
 
