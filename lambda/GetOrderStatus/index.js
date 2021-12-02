@@ -18,9 +18,7 @@ exports.handler = async (event) => {
                             "Content-Type": "application/x-www-form-urlencoded"
                             },
                             method: "POST"
-                        }).then((res) => {
-                            console.log("[SHIPPODATA] res: " + JSON.stringify(res));
-                        });
+                        }).promise();
     console.log("[SHIPPO_DATA] shippoData: " + JSON.stringify(shippoData));
 
     const response = {
