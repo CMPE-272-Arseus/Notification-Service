@@ -12,12 +12,10 @@ exports.handler = async (event) => {
     const tracking_number = orderData.trackingNumber;
 
     const shippoData = await fetch(`https://api.shippo.com/tracks/`, {
-                            headers: {'Authorization': `ShippoToken ${process.env.SHIPPO_APIKEY}`},
-                            method: 'GET',
-                            body: JSON.stringify({
-                                "carrier": carrier,
-                                "tracking_number": tracking_number
-                                })
+                            headers: {'Authorization': `ShippoToken ${process.env.SHIPPO_APIKEY}`,
+                                      'Content-Type': 'application/x-www-form-urlencoded'},
+                            method: 'POST',
+                            body: `carrier=${carrier}&tracking_number=${tracking_number}`
                             });
 
     const response = {
