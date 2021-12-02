@@ -127,7 +127,7 @@ def updateOrderStatus(order_id, status):
             Key={
                 'orderId': order_id
             },
-            UpdateExpression="set shipping = :n",
+            UpdateExpression="set statues = :n",
             ExpressionAttributeValues={
                 ':n': status
             },
