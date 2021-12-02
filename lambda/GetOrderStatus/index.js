@@ -13,7 +13,11 @@ exports.handler = async (event) => {
 
     const shippoData = await fetch(`https://api.shippo.com/tracks/`, 
                             headers = {'Authorization': `ShippoToken ${process.env.SHIPPO_APIKEY}`},
-                            methods= 'POST');
+                            methods= 'POST',
+                            body = JSON.stringify({
+                                "carrier": carrier,
+                                "tracking_number": tracking_number
+                                }));
 
     const response = {
         statusCode: 200,
