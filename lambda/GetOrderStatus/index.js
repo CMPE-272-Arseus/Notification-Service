@@ -19,7 +19,8 @@ exports.handler = async (event) => {
                             },
                             method: "POST"
                         })
-
+    console.log("[SHIPPO_DATA] shippoData: " + JSON.stringify(shippoData));
+    
     const response = {
         statusCode: 200,
         body: JSON.stringify({data: shippoData}),
